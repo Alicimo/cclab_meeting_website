@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ccLab: Meetings</title>
+        <meta charset="UTF-8">
+        <meta name="author" content="Alistair Martin">
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    </head>
+
+    <body>
+        <div class=container>
+			<div class="page-header text-center">
+				<h1>Caldas Lab Meeting Timetable</h1>
+			</div>
+			<div class="row">
+				<table class="table table-striped" id="meetings" style="width: auto; margin: 0px auto;">
+				</table>
+			</div>
+		</div>
+	</body>
+
+	<footer class="footer">
+		<div class="container">
+			<p class="text-muted text-center">Website created by <a href="http://www.stats.ox.ac.uk/~amartin/">Alistair Martin</a></p>
+		</div>
+</footer>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/tabletop.js"></script>
+    <script type="text/javascript">
+		var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1KkDYjv0sfCPLXZjleD6o-MdPsaLK0kNm-1OJcCnO8eM/edit?usp=sharing';
+		$(document).ready( function() {
+			Tabletop.init( { key: public_spreadsheet_url,
+							 callback: showInfo,
+							 simpleSheet: true } );
+		})
+
+		function showInfo(tableData) {
+
+			tableData.reverse();
+	
+			var tableHead = document.createElement("thead");
+			var row = document.createElement("tr");
+			Object.keys(tableData[0]).forEach( function(headData){
+				var cell = document.createElement("th");
+				cell.appendChild(document.createTextNode(headData));
+				row.appendChild(cell);
+			});
+			tableHead.append(row);
+			$("#meetings").append(tableHead);
+
+			var tableBody = document.createElement("tbody");
+			tableData.forEach( function(rowData) {
+				var row = document.createElement("tr");					
+				Object.values(rowData).forEach( function(cellData) {
+					var cell = document.createElement("td");
+					cell.appendChild(document.createTextNode(cellData));
+					row.appendChild(cell);
+				});
+				tableBody.appendChild(row);
+			});
+			$("#meetings").append(tableBody);
+
+			var current_date = Date.now();
+			var tableData_dates = tableData.map( function(element){
+				var diff = Date.parse(element["Date"].replace(/st|th|rd|nd/,"")) - current_date;
+				if (diff > 0){ return 1
+				} else if (diff < 0){ return -1
+				} else { return 0 
+			}});
+			var past_index = tableData_dates.indexOf(-1);
+			$("#meetings").children("tbody").find("tr").slice(past_index-1,past_index).addClass("danger")
+			$("#meetings").children("tbody").find("tr").slice(past_index).css("color","#888888")
+
+
+		};
+	</script>
+</html>
