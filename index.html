@@ -12,6 +12,11 @@
 			<div class="page-header text-center">
 				<h1>Caldas Lab Meeting Timetable</h1>
 			</div>
+            <div class="row text-center">
+                <button onclick="nextMeetingScroll()" id="myBtn" title="Go to next meeting" class="hidden">
+                    Next Meeting
+                </button>
+            </div>
 			<div class="row">
 				<table class="table table-striped" id="meetings" style="width: auto; margin: 0px auto;">
 				</table>
@@ -70,10 +75,18 @@
 				} else { return 0 
 			}});
 			var past_index = tableData_dates.indexOf(-1);
-			$("#meetings").children("tbody").find("tr").slice(past_index-1,past_index).addClass("danger")
-			$("#meetings").children("tbody").find("tr").slice(past_index).css("color","#888888")
+            console.log(past_index);
+            while (tableData_dates[past_index - 1] == 0){ past_index-- };
+			$("#meetings").children("tbody").find("tr").slice(past_index-1,past_index).addClass("danger");
+			$("#meetings").children("tbody").find("tr").slice(past_index).css("color","#888888");
 
-
+            $("#myBtn").removeClass("hidden");
 		};
+
+        function nextMeetingScroll() {
+            var nextOffset = $(".danger").offset().top + 100;
+            document.body.scrollTop = nextOffset; // For Safari
+            document.documentElement.scrollTop = nextOffset; // For Chrome, Firefox, IE and Opera
+        }
 	</script>
 </html>
